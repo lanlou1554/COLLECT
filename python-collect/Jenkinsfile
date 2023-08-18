@@ -1,0 +1,48 @@
+pipeline {
+    agent {label 'slave-python'}
+
+    stages {
+
+        stage('pull') {
+            steps {
+                retry(3){
+                    timeout(time:10,unit:'SECONDS'){
+                        git branch: 'master', credentialsId: 'ssh_key', url: 'git@git.nju.edu.cn:monian/python-collect.git'
+                    }
+                }
+                sh 'pwd'
+                sh 'ls -al'
+            }
+        }
+
+        stage('clean') {
+            steps {
+                script{
+                    try{
+                        sh 'make clean'
+                    }catch(err){
+                    }
+                }
+            }
+        }
+
+        stage('deploy') {
+            steps {
+                sh 'make deploy'
+            }
+        }
+
+
+
+    }
+    post {
+        success {
+            updateGitlabCommitStatus name: 'CICD', state: 'success'
+        }
+        failure {
+            updateGitlabCommitStatus name: 'CICD', state: 'failed'
+        }
+    }
+
+
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.flaw.FlawPicMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.flaw.FlawPic">
+    <id column="flawId" jdbcType="INTEGER" property="flawid" />
+    <id column="pictureURL" jdbcType="VARCHAR" property="pictureurl" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from flaw_pic
+    where flawId = #{flawid,jdbcType=INTEGER}
+      and pictureURL = #{pictureurl,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.flaw.FlawPic">
+    insert into flaw_pic (flawId, pictureURL)
+    values (#{flawid,jdbcType=INTEGER}, #{pictureurl,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select flawId, pictureURL
+    from flaw_pic
+  </select>
+  <select id="selectByFlawId" resultType="java.lang.String">
+    select pictureURL
+    from flaw_pic
+    where flawId = #{flawid,jdbcType=INTEGER}
+  </select>
+</mapper>

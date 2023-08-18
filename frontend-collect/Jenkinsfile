@@ -1,0 +1,81 @@
+pipeline {
+    agent {label 'slave'}
+
+    stages {
+
+        stage('pull') {
+            steps {
+                retry(3){
+                    timeout(time:10,unit:'SECONDS'){
+                        git branch: 'develop', credentialsId: 'ssh_key', url: 'git@git.nju.edu.cn:monian/frontend-collect.git'
+                    }
+                }
+                sh 'pwd'
+                sh 'ls -al'
+            }
+        }
+
+        stage('prepare') {
+            steps {
+                sh 'make prepare'
+            }
+        }
+
+        stage('clean') {
+            steps {
+                script{
+                    try{
+                        sh 'make clean'
+                    }catch(err){
+                    }
+                }
+            }
+        }
+
+        stage('build') {
+            steps {
+                script{
+                    try{
+                        retry(3){
+                            sleep(time: 10, unit: 'SECONDS')
+                            sh 'make build'
+                        }
+                    }catch(err){
+                        sh 'make end'
+                        throw err
+                    }
+                }
+            }
+        }
+
+        stage('test') {
+            steps {
+                sh 'make test'
+            }
+        }
+
+        stage('deploy') {
+            steps {
+                sh 'make deploy'
+            }
+        }
+
+        stage('end'){
+            steps{
+                sh 'make end'
+            }
+        }
+
+
+    }
+    post {
+        success {
+            updateGitlabCommitStatus name: 'CICD', state: 'success'
+        }
+        failure {
+            updateGitlabCommitStatus name: 'CICD', state: 'failed'
+        }
+    }
+
+
+}

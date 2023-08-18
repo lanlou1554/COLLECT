@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.flaw.EvaluationMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.flaw.Evaluation">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="flawId" jdbcType="INTEGER" property="flawid" />
+    <result column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from flaw_evaluation
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.flaw.Evaluation">
+    insert into flaw_evaluation (id, flawId, userId, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{flawid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, 
+      #{content,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.flaw.Evaluation">
+    update flaw_evaluation
+    set flawId = #{flawid,jdbcType=INTEGER},
+      userId = #{userid,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, flawId, userId, content
+    from flaw_evaluation
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, flawId, userId, content
+    from flaw_evaluation
+  </select>
+  <select id="selectByFlawId" resultMap="BaseResultMap">
+    select id, flawId, userId, content
+    from flaw_evaluation
+    where flawId = #{flawid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMap">
+    select id, flawId, userId, content
+    from flaw_evaluation
+    where userId = #{userid,jdbcType=INTEGER}
+  </select>
+</mapper>

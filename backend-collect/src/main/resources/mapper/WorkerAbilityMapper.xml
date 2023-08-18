@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.user.worker.WorkerAbilityMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.user.worker.WorkerAbility">
+    <id column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="collabVal" jdbcType="DOUBLE" property="collabval" />
+    <result column="reviewVal" jdbcType="DOUBLE" property="reviewval" />
+    <result column="creatVal" jdbcType="DOUBLE" property="creatval" />
+    <result column="detVal" jdbcType="DOUBLE" property="detval" />
+    <result column="expVal" jdbcType="DOUBLE" property="expval" />
+    <result column="comprehensiveVal" jdbcType="DOUBLE" property="comprehensiveval" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from worker_ability
+    where userId = #{userid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.user.worker.WorkerAbility">
+    insert into worker_ability (userId, collabVal, reviewVal, 
+      creatVal, detVal, expVal, 
+      comprehensiveVal)
+    values (#{userid,jdbcType=INTEGER}, #{collabval,jdbcType=DOUBLE}, #{reviewval,jdbcType=DOUBLE}, 
+      #{creatval,jdbcType=DOUBLE}, #{detval,jdbcType=DOUBLE}, #{expval,jdbcType=DOUBLE}, 
+      #{comprehensiveval,jdbcType=DOUBLE})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.user.worker.WorkerAbility">
+    update worker_ability
+    set collabVal = #{collabval,jdbcType=DOUBLE},
+      reviewVal = #{reviewval,jdbcType=DOUBLE},
+      creatVal = #{creatval,jdbcType=DOUBLE},
+      detVal = #{detval,jdbcType=DOUBLE},
+      expVal = #{expval,jdbcType=DOUBLE},
+      comprehensiveVal = #{comprehensiveval,jdbcType=DOUBLE}
+    where userId = #{userid,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select userId, collabVal, reviewVal, creatVal, detVal, expVal, comprehensiveVal
+    from worker_ability
+    where userId = #{userid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select userId, collabVal, reviewVal, creatVal, detVal, expVal, comprehensiveVal
+    from worker_ability
+  </select>
+</mapper>

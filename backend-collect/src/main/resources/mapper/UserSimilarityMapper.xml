@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.recommend.UserSimilarityMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.recommend.UserVectorComponent">
+    <result column="userId" jdbcType="INTEGER" property="userId" />
+    <result column="tag" jdbcType="INTEGER" property="tag" />
+    <result column="score" jdbcType="DOUBLE" property="score" />
+  </resultMap>
+    <resultMap id="JaccardSimilarityResultMap" type="com.seiii.collect.model.po.user.JaccardUserSimilarity">
+        <result column="userId1" jdbcType="INTEGER" property="userid1" />
+        <result column="userId2" jdbcType="INTEGER" property="userid2" />
+        <result column="jaccard_similarity" jdbcType="DOUBLE" property="jaccardsim" />
+    </resultMap>
+  <select id="selectSimilarUserVectorInfo" parameterType="map" resultMap="BaseResultMap">
+    select similar_user.userId, task_tag.tag, flaw.score
+    from
+      (
+        select workers.id as userId, 1 - ifnull((intersection_size / union_size), 0) as jaccard_dist
+        from (
+               select  userId,
+                       sum(
+                               case when tag in (
+                                 select tag from user_tag
+                                 where userId = #{userid,jdbcType=INTEGER}
+                               )
+                                      then 1
+                                    else 0
+                                 end
+                         ) as intersection_size,
+
+                       (select count(*)
+                        from user_tag
+                        where userId = #{userid,jdbcType=INTEGER})
+                         +
+                       sum(
+                               case when tag in (
+                                 select tag from user_tag
+                                 where userId = #{userid,jdbcType=INTEGER})
+                                      then 0
+                                    else 1
+                                 end
+                         ) as union_size
+               from user_tag
+               group by userId
+             ) x right join (
+                 select id
+                 from user_info
+                 where type = 1
+            ) workers on x.userId = workers.id
+        order by jaccard_dist
+        LIMIT #{limit,jdbcType=INTEGER}
+      ) as similar_user
+        join report_info on report_info.userId = similar_user.userId
+        join flaw on report_info.id = flaw.reportId and flaw.score >= 0
+        left join task_tag on report_info.taskId = task_tag.taskId;
+  </select>
+  <select id="selectJaccardSimilarity" parameterType="map" resultMap="JaccardSimilarityResultMap">
+      select #{userid,jdbcType=INTEGER} as userId1, workers.id as userId2, ifnull((intersection_size / union_size), 0) as jaccard_similarity
+      from (
+               select  userId,
+                       sum(
+                               case when tag in (
+                                   select tag from user_tag
+                                   where userId = #{userid,jdbcType=INTEGER}
+                               )
+                                        then 1
+                                    else 0
+                                   end
+                           ) as intersection_size,
+
+                       (select count(*)
+                        from user_tag
+                        where userId = #{userid,jdbcType=INTEGER})
+                           +
+                       sum(
+                               case when tag in (
+                                   select tag from user_tag
+                                   where userId = #{userid,jdbcType=INTEGER})
+                                        then 0
+                                    else 1
+                                   end
+                           ) as union_size
+               from user_tag
+               group by userId
+           ) x right join (
+          select id
+          from user_info
+          where type = 1
+      ) workers on x.userId = workers.id
+      order by jaccard_similarity desc
+      LIMIT #{limit,jdbcType=INTEGER}
+  </select>
+</mapper>

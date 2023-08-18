@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.report.ReportMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.report.Report">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="taskId" jdbcType="INTEGER" property="taskid" />
+    <result column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+  </resultMap>
+  <resultMap id="BriefResultMap" type="com.seiii.collect.model.po.report.ReportView">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="taskId" jdbcType="INTEGER" property="taskid" />
+    <result column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+  </resultMap>
+
+  <sql id="Brief_Column_List">
+        id
+        , taskId, userId, title
+   </sql>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from report_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.report.Report" useGeneratedKeys="true" keyProperty="id">
+    insert into report_info (id, taskId, userId, 
+      title, createTime)
+    values (#{id,jdbcType=INTEGER}, #{taskid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, 
+      #{title,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.report.Report">
+    update report_info
+    set taskId = #{taskid,jdbcType=INTEGER},
+      userId = #{userid,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, taskId, userId, title, createTime
+    from report_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, taskId, userId, title, createTime
+    from report_info
+  </select>
+  <select id="selectByUserIdAndPage" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from report_info
+    where userId = #{userid}
+    limit ${start},${pagesize};
+  </select>
+  <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from report_info
+    where userId = #{userid}
+  </select>
+  <select id="selectByTaskId" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from report_info
+    where taskId = #{taskid}
+  </select>
+  <select id="selectReportsByTaskId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from report_info
+    where taskId = #{taskid}
+  </select>
+</mapper>

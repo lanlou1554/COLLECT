@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.task.TaskMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.task.Task">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="startTime" jdbcType="TIMESTAMP" property="starttime" />
+    <result column="endTime" jdbcType="TIMESTAMP" property="endtime" />
+    <result column="workerNum" jdbcType="INTEGER" property="workernum" />
+    <result column="exeFileName" jdbcType="VARCHAR" property="exefilename" />
+    <result column="reqDocName" jdbcType="VARCHAR" property="reqdocname" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="recruitStop" jdbcType="BOOLEAN" property="recruitstop" />
+  </resultMap>
+  <resultMap id="BriefResultMap" type="com.seiii.collect.model.po.task.TaskView">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="startTime" jdbcType="TIMESTAMP" property="starttime" />
+    <result column="endTime" jdbcType="TIMESTAMP" property="endtime" />
+    <result column="workerNum" jdbcType="INTEGER" property="workernum" />
+  </resultMap>
+
+  <sql id="Brief_Column_List">
+        id
+        , userId, type, title, description, startTime, endTime, workerNum
+   </sql>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from task_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.task.Task" useGeneratedKeys="true" keyProperty="id">
+    insert into task_info (id, userId, type, 
+      title, description, startTime, 
+      endTime, workerNum, exeFileName, 
+      reqDocName, createTime)
+    values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{starttime,jdbcType=TIMESTAMP}, 
+      #{endtime,jdbcType=TIMESTAMP}, #{workernum,jdbcType=INTEGER}, #{exefilename,jdbcType=VARCHAR}, 
+      #{reqdocname,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.task.Task">
+    update task_info
+    set userId = #{userid,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      startTime = #{starttime,jdbcType=TIMESTAMP},
+      endTime = #{endtime,jdbcType=TIMESTAMP},
+      workerNum = #{workernum,jdbcType=INTEGER},
+      exeFileName = #{exefilename,jdbcType=VARCHAR},
+      reqDocName = #{reqdocname,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, userId, type, title, description, startTime, endTime, workerNum, exeFileName, 
+    reqDocName, createTime, recruitStop
+    from task_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, userId, type, title, description, startTime, endTime, workerNum, exeFileName,
+    reqDocName, createTime, recruitStop
+    from task_info
+  </select>
+  <select id="selectAllByPageId" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from task_info
+    limit ${start},${pagesize};
+  </select>
+  <select id="selectByUserIdAndAfterEndTime" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from task_info
+    where userId = #{userid} and endTime &lt; #{curtime}
+    limit ${start},${pagesize};
+  </select>
+  <select id="selectByUserIdAndBeforeEndTime" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from task_info
+    where userId = #{userid} and endTime &gt;= #{curtime}
+    limit ${start},${pagesize};
+  </select>
+  <select id="selectBeforeEndTimeAndAfterStartTime" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from task_info
+    where endTime &gt;= #{curtime} and #{curtime} >= startTime and recruitStop=false
+    limit ${start},${pagesize};
+  </select>
+  <select id="selectByIds" resultMap="BriefResultMap">
+    select
+    <include refid="Brief_Column_List"/>
+    from task_info where id in
+    <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+  <update id="updateRecruitStopByPrimaryKey" parameterType="java.lang.Integer">
+    update task_info
+    set recruitStop=true
+    where id=#{id,jdbcType=INTEGER}
+  </update>
+</mapper>

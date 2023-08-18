@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.user.worker.WorkerContextMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.user.worker.WorkerContext">
+    <id column="workerId" jdbcType="INTEGER" property="workerid" />
+    <result column="deviceType" jdbcType="VARCHAR" property="devicetype" />
+    <result column="osInfo" jdbcType="VARCHAR" property="osinfo" />
+    <result column="ramSize" jdbcType="VARCHAR" property="ramsize" />
+    <result column="netEnv" jdbcType="VARCHAR" property="netenv" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from worker_context
+    where workerId = #{workerid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.user.worker.WorkerContext">
+    insert into worker_context (workerId, deviceType, osInfo, 
+      ramSize, netEnv)
+    values (#{workerid,jdbcType=INTEGER}, #{devicetype,jdbcType=VARCHAR}, #{osinfo,jdbcType=VARCHAR}, 
+      #{ramsize,jdbcType=VARCHAR}, #{netenv,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.user.worker.WorkerContext">
+    update worker_context
+    set deviceType = #{devicetype,jdbcType=VARCHAR},
+      osInfo = #{osinfo,jdbcType=VARCHAR},
+      ramSize = #{ramsize,jdbcType=VARCHAR},
+      netEnv = #{netenv,jdbcType=VARCHAR}
+    where workerId = #{workerid,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select workerId, deviceType, osInfo, ramSize, netEnv
+    from worker_context
+    where workerId = #{workerid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select workerId, deviceType, osInfo, ramSize, netEnv
+    from worker_context
+  </select>
+</mapper>

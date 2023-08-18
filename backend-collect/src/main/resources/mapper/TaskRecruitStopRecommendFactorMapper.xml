@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.task.taskrecruitstop.TaskRecruitStopRecommendFactorMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.task.taskrecruitstop.TaskRecruitStopRecommendFactor">
+    <id column="taskId" jdbcType="INTEGER" property="taskid" />
+    <result column="abilityActual" jdbcType="DOUBLE" property="abilityactual" />
+    <result column="abilityExpected" jdbcType="DOUBLE" property="abilityexpected" />
+    <result column="activenessActual" jdbcType="DOUBLE" property="activenessactual" />
+    <result column="activenessExpected" jdbcType="DOUBLE" property="activenessexpected" />
+    <result column="relevanceActual" jdbcType="DOUBLE" property="relevanceactual" />
+    <result column="relevanceExpected" jdbcType="DOUBLE" property="relevanceexpected" />
+    <result column="diversityActual" jdbcType="DOUBLE" property="diversityactual" />
+    <result column="diversityExpected" jdbcType="DOUBLE" property="diversityexpected" />
+    <result column="avgTargetActual" jdbcType="DOUBLE" property="avgtargetactual" />
+    <result column="avgTargetExpected" jdbcType="DOUBLE" property="avgtargetexpected" />
+  </resultMap>
+  <delete id="deleteAll">
+    delete from task_recruit_stop_recommend_factor
+  </delete>
+  <insert id="insertAll" parameterType="com.seiii.collect.model.po.task.taskrecruitstop.TaskRecruitStopRecommendFactor">
+    insert into task_recruit_stop_recommend_factor (taskId, abilityActual, abilityExpected,
+      activenessActual, activenessExpected, relevanceActual, 
+      relevanceExpected, diversityActual, diversityExpected, 
+      avgTargetActual, avgTargetExpected)
+    values
+    <foreach collection="records" separator="," item="result">
+      (#{result.taskid,jdbcType=INTEGER}, #{result.abilityactual,jdbcType=DOUBLE}, #{result.abilityexpected,jdbcType=DOUBLE},
+      #{result.activenessactual,jdbcType=DOUBLE}, #{result.activenessexpected,jdbcType=DOUBLE}, #{result.relevanceactual,jdbcType=DOUBLE},
+      #{result.relevanceexpected,jdbcType=DOUBLE}, #{result.diversityactual,jdbcType=DOUBLE}, #{result.diversityexpected,jdbcType=DOUBLE},
+      #{result.avgtargetactual,jdbcType=DOUBLE}, #{result.avgtargetexpected,jdbcType=DOUBLE})
+    </foreach>
+
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.task.taskrecruitstop.TaskRecruitStopRecommendFactor">
+    update task_recruit_stop_recommend_factor
+    set abilityActual = #{abilityactual,jdbcType=DOUBLE},
+      abilityExpected = #{abilityexpected,jdbcType=DOUBLE},
+      activenessActual = #{activenessactual,jdbcType=DOUBLE},
+      activenessExpected = #{activenessexpected,jdbcType=DOUBLE},
+      relevanceActual = #{relevanceactual,jdbcType=DOUBLE},
+      relevanceExpected = #{relevanceexpected,jdbcType=DOUBLE},
+      diversityActual = #{diversityactual,jdbcType=DOUBLE},
+      diversityExpected = #{diversityexpected,jdbcType=DOUBLE},
+      avgTargetActual = #{avgtargetactual,jdbcType=DOUBLE},
+      avgTargetExpected = #{avgtargetexpected,jdbcType=DOUBLE}
+    where taskId = #{taskid,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select taskId, abilityActual, abilityExpected, activenessActual, activenessExpected, 
+    relevanceActual, relevanceExpected, diversityActual, diversityExpected, avgTargetActual, 
+    avgTargetExpected
+    from task_recruit_stop_recommend_factor
+    where taskId = #{taskid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select taskId, abilityActual, abilityExpected, activenessActual, activenessExpected, 
+    relevanceActual, relevanceExpected, diversityActual, diversityExpected, avgTargetActual, 
+    avgTargetExpected
+    from task_recruit_stop_recommend_factor
+  </select>
+</mapper>

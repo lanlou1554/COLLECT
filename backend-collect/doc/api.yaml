@@ -1,0 +1,2220 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Terminator111/COLLECT/5.0.0
+info:
+  description: 软工三项目接口文档
+  version: 4.0.0
+  title: COLLECT-API
+
+tags:
+  - name: user
+    description: 用户
+  - name: admin
+    description: 管理员
+  - name: task
+    description: 众测任务
+  - name: report
+    description: 报告
+  - name: file
+    description: 文件
+  - name: flaw
+    description: 缺陷
+paths:
+  /user/register:
+    post:
+      tags:
+        - user
+      summary: 用户注册
+      description:
+        通过填写用户名、密码、邮箱、手机号进行新用户注册，选择用户类型
+      # parameters: ?
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseVO"
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: 用户登录
+      description: 通过用户名和密码进行登录验证
+      # parameters:? 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFormDTO'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              # 此处schema对应ResponseVO，下面均同，务必注意！
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/UserViewVO'
+
+  /user/info/{userId}:
+    get:
+      tags:
+        - user
+      summary: 根据id获取用户简略信息
+      description: 返回用户用户名和类型
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/UserViewVO"
+  /user/info/list:
+    post:
+      tags:
+        - user
+      summary: 根据id列表获取简略信息列表
+      description: 返回用户名和类型的列表
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                description: 用户id
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UserViewVO"
+  /user/view/{userId}:
+    get:
+      tags:
+        - user
+      summary: 查看用户个人信息
+      description: 通过user id定位用户并返回信息
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: user id
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/UserVO"
+  /user/task/finished/{userId}:
+    get:
+      tags:
+        - user
+      summary: 预览已完成任务
+      description: 众包工人查看个人历史完成已交报告的任务列表/发包方查看已发布的完成的任务列表（预览）
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: pageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        # - name: sortType
+        #   in: query
+        #   schema:
+        #     type: integer
+        #   required: true
+        #   description: 0代表按发表时间倒序，1代表按最新回复时间倒序
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TaskViewVO"
+  /user/task/unfinished/{userId}:
+    get:
+      tags:
+        - user
+      summary: 预览进行中任务
+      description: 众包工人查看正在执行的任务列表/发包方查看已发布的正在执行中的任务列表（预览）
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: pageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        # - name: sortType
+        #   in: query
+        #   schema:
+        #     type: integer
+        #   required: true
+        #   description: 0代表按发表时间倒序，1代表按最新回复时间倒序
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TaskViewVO"
+  /user/task/expired/{userId}:
+    get:
+      tags:
+        - user
+      summary: 预览逾期未交报告的任务
+      description: 众包工人查看个人逾期未交报告的任务
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: pageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        # - name: sortType
+        #   in: query
+        #   schema:
+        #     type: integer
+        #   required: true
+        #   description: 0代表按发表时间倒序，1代表按最新回复时间倒序
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TaskViewVO"
+  /user/task/report/{userId}:
+    get:
+      tags:
+        - user
+      summary: 从任务中预览报告
+      description: 预览任务中的报告列表。对于众包工人和发包方点进任务可看到相应的测试报告
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: taskId
+          in: query
+          schema:
+            type: integer
+          required: true
+        - name: pageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        # - name: sortType
+        #   in: query
+        #   schema:
+        #     type: integer
+        #   required: true
+        #   description: 0代表按发表时间倒序，1代表按最新回复时间倒序
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ReportViewVO"
+  /user/report/{userId}:
+    get:
+      tags:
+        - user
+      summary: 预览自己的所有报告
+      description: 预览众包工人目前的所有报告
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: pageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        # - name: sortType
+        #   in: query
+        #   schema:
+        #     type: integer
+        #   required: true
+        #   description: 0代表按发表时间倒序，1代表按最新回复时间倒序
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportViewVO'
+  /user/workerreport/{userId}:
+    get:
+      tags:
+        - user
+      summary: 众包工人获取自己的报告
+      description: 已完成报告提交的众包工人可以获取自己关于某个任务的报告
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: taskId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ReportViewVO'
+  /user/tag/add:
+    post:
+      tags:
+        - user
+      summary: 用户添加标签
+      description: 用户添加某个标签
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+        - name: tag
+          in: query
+          schema:
+            type: integer
+            description: 传递标签对应的整型标识
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseVO"
+  /user/tag/delete:
+    delete:
+      tags:
+        - user
+      summary: 用户删除标签
+      description: 用户删除某个标签
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+        - name: tag
+          in: query
+          schema:
+            type: integer
+            description: 传递标签对应的整型标识
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseVO"
+  /user/worker/context/{userId}:
+    get:
+      tags:
+        - user
+      summary: 工人获取测试的环境
+      description: 工人获取个人测试的环境
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/WorkerContextVO"
+  /user/worker/contextUpdate/{userId}:
+    post:
+      tags:
+        - user
+      summary: 工人修改测试的环境
+      description: 工人修改个人测试的环境
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerContextDTO'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/WorkerContextVO"
+  /user/worker/radar/{userId}:
+    get:
+      tags:
+        - user
+      summary: 获取工人对应的雷达图
+      description: 获取工人对应的雷达图，注意最终显示的是分数，要是1-100之间的整数
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/WorkerRadarVO"
+  /user/worker/wordcloud/{userId}:
+    get:
+      tags:
+        - user
+      summary: 获取工人对应的关键词
+      description: 获取工人对应的关键词,千万注意调用python后要乘以100！
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WorkerWordCloudVO"
+  /user/worker/radar/avg:
+    get:
+      tags:
+        - user
+      summary: 获取所有工人的平均雷达图
+      description: 获取所有工人的平均雷达图，注意最终显示的是分数，要是1-100之间的整数
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/WorkerRadarVO"
+  /user/worker/activation/{userId}:
+    get:
+      tags:
+        - user
+      summary: 获取工人对应的活跃度指数
+      description: 获取工人对应活跃度指数，score在1-100之间，是整数
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/WorkerActivationVO"
+  /admin/task/all:
+    get:
+      tags:
+        - admin
+      summary: 管理员预览任务
+      description: 管理员查看所有任务列表（预览）
+      parameters:
+        - name: pageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        # - name: sortType
+        #   in: query
+        #   schema:
+        #     type: integer
+        #   required: true
+        #   description: 0代表按发表时间倒序，1代表按最新回复时间倒序
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TaskViewVO"
+  /admin/task/detail/{taskId}:
+    get:
+      tags:
+        - admin
+      summary: 管理员查看任务详细信息
+      description: 管理员从任务列表中点击某一个任务，查看任务详细信息
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/TaskVO'
+  /admin/recommendRule/list:
+    get:
+      tags:
+        - admin
+      summary: 管理员查看推荐规则列表
+      description: 管理员查看所有的推荐规则，需要标注出哪一条规则是当前正在使用的
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecommendRuleVO'
+  /admin/priorityFactor/list:
+    get:
+      tags:
+        - admin
+      summary: 管理员查看可选的优先级因素列表
+      description: 返回所有的可选因素
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecommendRuleFactorVO'
+  /admin/recommendRule/delete/{ruleId}:
+    delete:
+      tags:
+        - admin
+      summary: 管理员删除推荐规则
+      description: 管理员删除一个推荐规则，要确保管理员没有删除正在使用的推荐规则
+      parameters:
+        - name: ruleId
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseVO'
+  /admin/recommendRule/add:
+    post:
+      tags:
+        - admin
+      summary: 管理员添加推荐规则
+      description: 管理员向推荐列表中添加一条推荐规则
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendRuleDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecommendRuleVO'
+  #  /admin/recommendRule/edit/{ruleId}:
+  #    post:
+  #      tags:
+  #        - admin
+  #      summary: 管理员修改一条推荐规则
+  #      description: 管理员修改推荐规则列表中的一条推荐规则
+  #      parameters:
+  #        - name: ruleId
+  #          schema:
+  #            type: integer
+  #          in: path
+  #          required: true
+  #      requestBody:
+  #        content:
+  #          application/json:
+  #            schema:
+  #              $ref: '#/components/schemas/RecommendRuleDTO'
+  #      responses:
+  #        '200':
+  #          description: OK
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #                properties:
+  #                  code:
+  #                    type: integer
+  #                  msg:
+  #                    type: string
+  #                  data:
+  #                    type: array
+  #                    items:
+  #                      $ref: '#/components/schemas/RecommendRuleVO'
+  /admin/recommendRule/select/{ruleId}:
+    post:
+      tags:
+        - admin
+      summary: 管理员启用推荐规则
+      description: 管理员在推荐规则列表，选择启用某一条推荐规则（仅一条为启用状态）
+      parameters:
+        - name: ruleId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseVO"
+  /task/unfinished:
+    get:
+      tags:
+        - task
+      summary: 预览所有任务列表
+      description: 发包方/众包工人在任务广场中，查看所有正在招募的任务列表（预览）
+      parameters:
+        - name: pageId
+          in: query
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+        # - name: sortType
+        #   in: query
+        #   schema:
+        #     type: integer
+        #   required: true
+        #   description: 0代表按发表时间倒序，1代表按最新回复时间倒序
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TaskViewVO"
+  /task/detail/{taskId}:
+    get:
+      tags:
+        - task
+      summary: 查看任务详细信息
+      description: 发包方/众包工人从任务列表中点击某一个任务，查看任务详细信息
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/TaskVO"
+  /task/issue:
+    post:
+      tags:
+        - task
+      summary: 通过请求体发布任务
+      description: 发包方通过PostDTO发布任务，taskId后端自行生成，发布任务后以VO格式返回，方便前端展示创建任务的详细信息
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskDTO"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/TaskVO"
+  # 可以拆分成两个接口：选取、根据taskId获得taskVO
+  /task/pick/{taskId}:
+    post: # get？
+      tags:
+        - task
+      summary: 选取任务
+      description: 众包工人在任务详细页面可以选取任务，并获取任务相关资料，后端要存储选取的信息
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/TaskVO"
+  /task/detail/getreport/{taskId}:
+    get:
+      tags:
+        - task
+      summary: 获取报告Id
+      description: 当用户在任务详情页要去完善报告时，需要知道已经提交的报告Id
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: integer
+                    description: reportId
+  /task/taskRecommendFactor/list:
+    get:
+      tags:
+        - task
+      summary: 发包方查看可选的推荐规则因素列表，返回值中weight是默认权重
+      description: 返回所有的可选因素
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecommendRuleFactorVO'
+  /task/taskRecommendFactor/set/{taskId}:
+    post:
+      tags:
+        - task
+      summary: 发包方设置此任务的推荐权重
+      description: 发包方设置此任务的推荐权重
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecommendRuleFactorVO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecommendRuleFactorVO'
+  /task/taskRecommendFactor/get/{taskId}:
+    get:
+      tags:
+        - task
+      summary: 发包方查看此任务的推荐权重
+      description: 发包方查看此任务的推荐权重
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RecommendRuleFactorVO'
+  /task/taskRadar/current/{taskId}:
+    get:
+      tags:
+        - task
+      summary: 发包方查看此任务的当前工人的雷达图值
+      description: 发包方查看此任务的当前工人的雷达图值，包括工人能力、活跃度、相关性、多样性
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                      $ref: '#/components/schemas/TaskRadarVO'
+  /task/taskRadar/target/{taskId}:
+    get:
+      tags:
+        - task
+      summary: 发包方查看此任务的目标的雷达图值
+      description: 发包方查看此任务的目标雷达图值，包括工人能力、活跃度、相关性、多样性
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                      $ref: '#/components/schemas/TaskRadarVO'
+  /task/stop/{taskId}:
+    post:
+      tags:
+        - task
+      summary: 发包方手动停止招募
+      description: 发包方手动停止招募
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseVO"
+  /task/taskFlawDetection/{taskId}:
+    get:
+      tags:
+        - task
+      summary: 发包方查看此任务的全新缺陷发现曲线及预测的总缺陷数
+      description: 发包方查看此任务的新缺陷发现曲线及预测的总缺陷数，注意，只计算每个缺陷树根节点的发现时间和数量，以一个缺陷树为单位。返回值是以天为单位，返回在xx天前一共发现了xx个缺陷
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/TaskFlawDetectionPredictionVO'
+  
+
+  /report/detail/{reportId}:
+    get:
+      tags:
+        - report
+      summary: 查看报告详细信息
+      description: 发包方/众包工人从报告列表中点击某一个报告，查看报告详细信息
+      parameters:
+        - name: reportId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/ReportVO"
+  /report/issue:
+    post:
+      tags:
+        - report
+      summary: 通过请求体提交报告
+      description: 众包工人在线填写，并通过ReportDTO提交报告，reportId后端自行生成，发布报告后以VO格式返回，方便前端展示填写报告的详细信息
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ReportVO'
+  /report/toBeRefined:
+    get:
+      tags:
+        - report
+      summary: 获取报告中待修改的缺陷列表
+      description: 在众包工人提交报告之后，系统会检测与该报告中的缺陷相似的缺陷，前端通过这个接口获取相似缺陷列表
+      parameters:
+        - name: reportId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TBAFlawVO'
+  /flaw/refine/{flawId}:
+    post:
+      tags:
+        - flaw
+      summary: 完善一个缺陷
+      description: 众包工人可以在报告完善过程中选择fork一个其他人的缺陷, 请求体中的内容是用户修改后的缺陷
+      parameters:
+        - name: flawId
+          description: 当前缺陷的Id
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: forkedFlawId
+          description: 被fork的缺陷的id
+          in: query
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlawDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseVO'
+  /flaw/nofork/{flawId}: #这个接口会不会有点多余？
+    get:
+      tags:
+        - flaw
+      summary: 不fork任何一个缺陷
+      description: 用户认为系统推荐的相似缺陷中没有任何一个缺陷和自己的缺陷相同，决定直接提交自己的缺陷而不去fork任何缺陷。
+      parameters:
+        - name: flawId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseVO'
+  /flaw/tree/{flawId}:
+    get:
+      tags:
+        - flaw
+      summary: 获取与该缺陷相关联的缺陷树（暂定）
+      description: 获取与该缺陷相关的缺陷树
+      parameters:
+        - name: flawId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/FlawTreeNodeVO'
+    # /flaw/tree/{flawId}:
+    # get:
+    #   tags:
+    #   -flaw
+    #   summary: 获取与该缺陷相关联的缺陷树
+    #   description: 获取与该缺陷相关的缺陷树, 只返回当前节点及其子节点
+    #   parameters:
+    #     - name: flawId
+    #       in: path
+    #       schema:
+    #         type: integer
+    #       required: true
+    #   responses:
+    #     '200':
+    #       description: OK
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schema/FlawTreeNodeVO'
+
+  /flaw/similarFlaw/{flawId}:
+    get:
+      tags:
+        - flaw
+      summary: 获取与当前缺陷相似的缺陷列表
+      description: 获取与当前缺陷相似的缺陷列表（按照相似度从高到低排序）
+      parameters:
+        - name: flawId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SimilarFlawVO'
+  /flaw/myScore/{flawId}:
+    get:
+      tags:
+        - flaw
+      summary: 获取某用户对该缺陷的评分
+      description: 获取某用户对该缺陷的评分
+      parameters:
+        - name: flawId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: integer
+                    description: 用户对该缺陷的评分值，如果为-1表示未评分
+  /flaw/score/:
+    post:
+      tags:
+        - flaw
+      summary: 对缺陷进行评分
+      description: 对某个缺陷进行评分
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlawScoreDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseVO'
+  /flaw/flawMap/{taskId}:
+    get:
+      tags:
+        - flaw
+      summary: 获取某个任务的缺陷图
+      description: 缺陷图中的每个节点都是某棵缺陷树的根节点，也就是说图中的每个节点都没有fork任何其他的缺陷, 对数据进行归一化和去中心化所有图中节点的均值在(0, 0)并且所有点的横纵坐标都在[-1,1]范围内
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/FlawMapVO'
+  #  /flaw/flawSimilarity/{flawId}:
+  #    post:
+  #      tags:
+  #        - flaw
+  #      summary: 获取给定缺陷和多个缺陷的相似度
+  #      description: 给定一个由缺陷id所组成的数组，获取id为flawId的缺陷与数组中所有缺陷的相似度，按照数组中的顺序返回
+  #      parameters:
+  #        - name: flawId
+  #          in: path
+  #          schema:
+  #            type: integer
+  #          required: true
+  #      requestBody:
+  #        required: true
+  #        content:
+  #          application/json:
+  #            schema:
+  #              type: array
+  #              items:
+  #                type: integer
+  #      responses:
+  #        '200':
+  #          description: OK
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #                properties:
+  #                  code:
+  #                    type: integer
+  #                  msg:
+  #                    type: string
+  #                  data:
+  #                    type: array
+  #                    items:
+  #                      type: number
+  #                      maximum: 1.0
+  #                      minimum: 0.0
+  #  /tag/groups:
+  #    get:
+  #      tags:
+  #        - tag
+  #      summary: 获取标签组（暂定）
+  #      description: 获取所有的标签组，作为选项，这些标签可能被用在任务发布或者众包工人注册信息上
+  #      responses:
+  #        '200':
+  #          description: OK
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #                properties:
+  #                  code:
+  #                    type: integer
+  #                  msg:
+  #                    type: string
+  #                  data:
+  #                    type: array
+  #                    items:
+  #                      $ref: '#/components/schemas/TagGroupVO'
+  /flaw/evaluations/{flawId}:
+    get:
+      tags:
+        - flaw
+      summary: 获取缺陷的所有评价
+      parameters:
+        - name: flawId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          description: 当前登录用户的id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FlawEvaluationVO'
+  /flaw/add/evaluation/{flawId}:
+    post:
+      tags:
+        - flaw
+      summary: 给非自己的报告中的缺陷增加一条评价
+      parameters:
+        - name: flawId
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlawEvaluationDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FlawEvaluationVO'
+  /flaw/evaluation/like/{evaluationId}:
+    post:
+      tags:
+        - flaw
+      summary: 给某个评论点赞，默认可以点赞
+      parameters:
+        - name: evaluationId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/FlawEvaluationVO'
+  /flaw/evaluation/dislike/{evaluationId}:
+    post:
+      tags:
+        - flaw
+      summary: 给某个评论点踩，默认可以点踩
+      parameters:
+        - name: evaluationId
+          in: path
+          schema:
+            type: integer
+          required: true
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/FlawEvaluationVO'
+  /flaw/add/append:
+    post:
+      tags:
+        - flaw
+      summary: 增加或修改补充内容
+      description: 无论是增加还是修改补充内容都调用这一个接口，后端直接覆盖字符串即可，只能对自己的报告增加/修改补充内容
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlawAppendDTO"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseVO"
+
+  /file/policy:
+    get:
+      tags:
+        - file
+      summary: oss的policy请求接口
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  msg:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/OSSPolicyVO"
+
+
+components:
+  schemas:
+    ResponseVO:
+      type: object
+      description: api返回格式
+      properties:
+        code:
+          type: integer
+        msg:
+          type: string
+        data:
+          type: object
+    OSSPolicyVO:
+      type: object
+      properties:
+        accessKeyId:
+          type: string
+        policy:
+          type: string
+        signature:
+          type: string
+        dir:
+          type: string
+        host:
+          type: string
+        callback:
+          $ref: "#/components/schemas/OSSCallbackParamVO"
+    OSSCallbackParamVO:
+      type: object
+      properties:
+        callbackUrl:
+          type: string
+        callbackBody:
+          type: string
+        callbackBodyType:
+          type: string
+    UserVO:
+      type: object
+      description: 用户
+      properties:
+        id:
+          type: integer
+        type:
+          type: integer
+          description: 0代表发包方，1代表众包工人
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        tagGroups:
+          type: array
+          items:
+            type: integer
+    UserDTO:
+      type: object
+      description: 更新用户信息
+      properties:
+        type:
+          type: integer
+          description: 0代表发包方，1代表众包工人
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        ## intention1: 要不要在众包工人注册的时候让他选一选自己的标签？
+        tagGroups:
+          type: array
+          items:
+            type: integer
+    UserFormDTO:
+      type: object
+      description: 用户登陆表单信息
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    UserViewVO:
+      type: object
+      description: 用户简略个人信息展示
+      properties:
+        id:
+          type: integer
+        type:
+          type: integer
+          description: 0代表发包方，1代表众包工人，2代表管理员（注册的时候前端只有0，1两个选项）
+        username:
+          type: string
+    WorkerContextVO:
+      type: object
+      description: 工人测试的环境，包含四个特征
+      properties:
+        id:
+          type: integer
+          description: 工人的id
+        deviceType:
+          type: string
+          description: 设备类型
+        osInfo:
+          type: string
+          description: os信息
+        ramSize:
+          type: string
+          description: 内存大小
+        netEnv:
+          type: string
+          description: 网络环境
+    WorkerContextDTO:
+      type: object
+      description: 工人修改测试环境表单信息
+      properties:
+        deviceType:
+          type: string
+          description: 设备类型
+        osInfo:
+          type: string
+          description: os信息
+        ramSize:
+          type: string
+          description: 内存大小
+        netEnv:
+          type: string
+          description: 网络环境
+    WorkerRadarVO:
+      type: object
+      description: 工人的雷达图信息
+      properties:
+        cooperateAbility:
+          type: number
+          description: 报告协作能力
+        reviewAbility:
+          type: number
+          description: 报告审查能力
+        creativeAbility:
+          type: number
+          description: 创新能力
+        findBugAbility:
+          type: number
+          description: 寻找bug的能力
+        languageAbility:
+          type: number
+          description: 语言表达能力
+        avgAbility:
+          type: number
+          description: 综合能力
+    WorkerWordCloudVO:
+      type: object
+      description: 词云VO
+      properties:
+        content:
+          type: string
+          description: 内容
+        weight:
+          type: integer
+          description: 权重
+    WorkerActivationVO:
+      type: object
+      description: 工人活跃度VO
+      properties:
+        lastSubmitTime:
+          type: string
+          format: date-time
+        lastThreeDaySubmitNum:
+          type: integer
+        lastTwoWeeksSubmitNum:
+          type: integer
+        lastOneMonthSubmitNum:
+          type: integer
+        lastHalfYearSubmitNum:
+          type: integer
+        score:
+          type: integer
+    TaskVO:
+      type: object
+      description: 众测任务
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+          description: 发包方的id
+        type:
+          type: integer
+          description: 0代表功能测试，1代表性能测试
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        workerNum:
+          type: integer
+        # others……
+        pickedWorkerNum:
+          type: integer
+        exeFileName:
+          type: string
+        reqDocName:
+          type: string
+        state:
+          type: integer
+          description: 用来描述任务的状态。0表示未领取或者请求该任务详情的用户不是众包工人，1表示进行中，2表示已完成，3表示逾期未交，4表示待完善（缺陷没有完全被处理），5表示任务已停止招募
+        createTime:
+          type: string
+          format: date-time
+        tagGroups:
+          type: array
+          items:
+            type: integer
+    TaskViewVO:
+      type: object
+      description: 任务预览信息
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+          description: 发包方的id
+        type:
+          type: integer
+          description: 0代表功能测试，1代表性能测试
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        workerNum:
+          type: integer
+        pickedWorkerNum:
+          type: integer
+        tagGroups:
+          type: array
+          items:
+            type: integer
+    TaskRadarVO:
+      type: object
+      description: 任务雷达图信息
+      properties:
+        ability:
+          type: number
+          description: 能力
+        activation:
+          type: number
+          description: 活跃度
+        revelance:
+          type: number
+          description: 相关性
+        diversity:
+          type: number
+          description: 多样性
+        avgTarget:
+          type: number
+          description: 平均目标值
+    TaskFlawDetectionPredictionVO:
+      type: object
+      description: 包含对当前任务预测的所有可能flaw数量及已发现缺陷曲线列表
+      properties:
+        numPredicted:
+          type: integer
+          description: 对当前任务预测的所有可能不重复的flaw数量
+        curves:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskFlawDetectionCurveVO'
+    TaskFlawDetectionCurveVO:
+      type: object
+      description: 
+        在此日期及以前，发现了几个缺陷（以天为单位，只计算缺陷树的根节点）
+      properties:
+        time:
+          type: string
+          format: date-time
+        num:
+          type: integer
+    TaskDTO:
+      type: object
+      description: 众测任务
+      properties:
+        userId:
+          type: integer
+          description: 发包方的id
+        type:
+          type: integer
+          description: 0代表功能测试，1代表性能测试
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        workerNum:
+          type: integer
+        # others……
+        # 以下 两个 实现方式 待定
+        exeFileURL:
+          type: string
+        reqDocURL:
+          type: string
+        ## intention2: 要不要在发包方发布任务的时候让他给任务选定一组标签
+        tagGroups:
+          type: array
+          items:
+            type: integer
+        recommendFactor:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendRuleFactorVO'
+    ReportVO:
+      type: object
+      description: 测试报告
+      properties:
+        id:
+          type: integer
+        taskId:
+          type: integer
+        userId:
+          type: integer
+          description: 众包工人的id
+        title:
+          type: string
+        createTime:
+          type: string
+          format: date-time
+        ## change5: 我在这个类型中添加了一个score属性
+        score:
+          type: number
+        flaws:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlawVO' ## change6: 我修改了flawVO，这里引用了flawVO
+    ReportDTO:
+      type: object
+      description: 测试报告传输
+      properties:
+        taskId:
+          type: integer
+        userId:
+          type: integer
+          description: 众包工人的id
+        title:
+          type: string
+        flaws:
+          type: array
+          items:
+            ## change1: 这里原来使用的是FlawVO，我将它改为FlawDTO
+            $ref: '#/components/schemas/FlawDTO'
+    ReportViewVO:
+      type: object
+      description: 测试报告简略信息展示
+      properties:
+        id:
+          type: integer
+        taskId:
+          type: integer
+          description: 可服务于众包工人直接浏览所有测试报告
+        userId:
+          type: integer
+          description: 众包工人的id，为了让发包方看到
+        title:
+          type: string
+        ## change4: 我在这个类型中添加了一个score属性
+        score:
+          type: number
+          description: 报告评分
+        flawNum:
+          type: integer
+          description: 缺陷个数
+        # 要不要加一个报告状态？
+    ## change2: 这里原来是FlawVO，我将它改为FlawDTO并且删除了其中的id和reportId属性
+    FlawDTO:
+      type: object
+      description: 缺陷
+      properties:
+        pictureURLs:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        stepDes:
+          type: string
+        deviceInfo:
+          type: string
+    ## change3: 我添加了一个flawVO类型，相比原来的flawVO，这个类型中多出了score和forkedId属性
+    FlawEvaluationDTO:
+      type: object
+      description: 缺陷评价
+      properties:
+        userId:
+          type: integer
+        content:
+          type: string
+    FlawAppendDTO:
+      type: object
+      description: 缺陷补充
+      properties:
+        flawId:
+          type: integer
+        appendContent:
+          type: string
+    FlawScoreDTO:
+      type: object
+      description: 缺陷评分
+      properties:
+        userId:
+          type: integer
+        flawId:
+          type: integer
+        score:
+          type: integer
+    FlawVO:
+      type: object
+      description: 缺陷
+      properties:
+        id:
+          type: integer
+        reportId:
+          type: integer
+        pictureURLs:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        stepDes:
+          type: string
+        deviceInfo:
+          type: string
+        score:
+          type: number
+        scoreNum:
+          type: integer
+          description: 评分人数
+        state:
+          type: boolean
+          description: 该缺陷是否已经被处理
+        appendContent:
+          type: string
+          description: 对已提交的报告的补充内容
+    FlawTreeNodeVO:
+      type: object
+      description: 缺陷树节点
+      properties:
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlawTreeNodeVO'
+        current:
+          $ref: '#/components/schemas/FlawVO'
+    # FlawTreeNodeVO:
+    #   type: object
+    #   description: 缺陷树节点
+    #   properties:
+    #     children:
+    #       type: array
+    #       items: integer
+    #     current:
+    #       $ref: '#/components/schemas/FlawVO'
+    SimilarFlawVO:
+      type: object
+      description: 相似缺陷
+      properties:
+        similarity:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+        flaw:
+          $ref: '#/components/schemas/FlawVO'
+    TBAFlawVO:
+      type: object
+      description: 有待完善的缺陷
+      properties:
+        tbaFlaw:
+          $ref: '#/components/schemas/FlawVO'
+        similarFlaws:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimilarFlawVO'
+    FlawEvaluationVO:
+      type: object
+      description: 某缺陷的单个评价
+      properties:
+        evaluationId:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserViewVO'
+        content:
+          type: string
+        likeInfo:
+          $ref: '#/components/schemas/FlawEvaLikeVO'
+    RecommendRuleDTO:
+      type: object
+      description: 推荐规则
+      properties:
+        name:
+          type: string
+        factors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendRuleFactorVO'
+    RecommendRuleVO:
+      type: object
+      description: 推荐规则
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        using:
+          type: boolean
+        factors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendRuleFactorVO'
+    RecommendRuleFactorVO:
+      type: object
+      description: 推荐优先级影响因素
+      properties:
+        name:
+          type: string
+        weight:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+    FlawMapVO:
+      type: object
+      description: 缺陷图
+      properties:
+        flawIds:
+          description: 根节点的flawId的列表
+          type: array
+          items:
+            type: integer
+        similarityMatrix:
+          description: 矩阵中i行j列的元素代表flawIds中索引为i和j的缺陷的相似度
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+    FlawEvaLikeVO:
+      type: object
+      description: 返回当前单个评论的点赞与点踩的数量，和当前用户对此条评论点赞点踩的状态（0—未点赞点踩，1-已点赞未点踩，2-已点踩未点赞，3-不能点赞和点踩）
+      properties:
+        likeNum:
+          description: 当前单个评论的点赞数量
+          type: integer
+        dislikeNum:
+          description: 当前单个评论的点踩数量
+          type: integer
+        status:
+          description: 当前用户对此条评论点赞点踩的状态
+          type: integer

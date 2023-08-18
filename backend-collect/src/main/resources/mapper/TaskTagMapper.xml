@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.task.TaskTagMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.task.TaskTag">
+    <id column="taskId" jdbcType="INTEGER" property="taskid" />
+    <id column="tag" jdbcType="INTEGER" property="tag" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from task_tag
+    where taskId = #{taskid,jdbcType=INTEGER}
+      and tag = #{tag,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.task.TaskTag">
+    insert into task_tag (taskId, tag)
+    values (#{taskid,jdbcType=INTEGER}, #{tag,jdbcType=INTEGER})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select taskId, tag
+    from task_tag
+  </select>
+  <select id="selectByTaskId" resultType="java.lang.Integer">
+    select tag
+    from task_tag
+    where taskId = #{taskid,jdbcType=INTEGER}
+  </select>
+</mapper>

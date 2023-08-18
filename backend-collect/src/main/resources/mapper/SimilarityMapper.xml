@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.flaw.SimilarityMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.flaw.Similarity">
+    <id column="flawId1" jdbcType="INTEGER" property="flawid1" />
+    <id column="flawId2" jdbcType="INTEGER" property="flawid2" />
+    <result column="similarity" jdbcType="DOUBLE" property="similarity" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from similarity
+    where flawId1 = #{flawid1,jdbcType=INTEGER}
+      and flawId2 = #{flawid2,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.flaw.Similarity">
+    insert into similarity (flawId1, flawId2, similarity
+      )
+    values (#{flawid1,jdbcType=INTEGER}, #{flawid2,jdbcType=INTEGER}, #{similarity,jdbcType=DOUBLE}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.flaw.Similarity">
+    update similarity
+    set similarity = #{similarity,jdbcType=DOUBLE}
+    where flawId1 = #{flawid1,jdbcType=INTEGER}
+      and flawId2 = #{flawid2,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select flawId1, flawId2, similarity
+    from similarity
+    where flawId1 = #{flawid1,jdbcType=INTEGER}
+      and flawId2 = #{flawid2,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select flawId1, flawId2, similarity
+    from similarity
+  </select>
+  <select id="selectByFlawIdCompared" parameterType="map" resultMap="BaseResultMap">
+    select flawId1, flawId2, similarity
+    from similarity
+    where flawId1 = #{flawid1,jdbcType=INTEGER}
+  </select>
+  <select id="selectByFlawIdSecondCompared" parameterType="map" resultMap="BaseResultMap">
+    select flawId1, flawId2, similarity
+    from similarity
+    where flawId2 = #{flawid2,jdbcType=INTEGER}
+  </select>
+</mapper>

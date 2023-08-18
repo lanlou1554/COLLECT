@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.recommend.MultiObjectiveRecommendResultMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.recommend.MultiObjectiveRecommendResult">
+    <id column="userid" jdbcType="INTEGER" property="userid" />
+    <id column="taskid" jdbcType="INTEGER" property="taskid" />
+  </resultMap>
+  <delete id="deleteAll">
+    delete from multi_objective_recommend_result
+  </delete>
+
+  <insert id="insertAll">
+    insert into multi_objective_recommend_result (userid, taskid) values
+    <foreach collection="resultList" separator="," item="result">
+      (#{result.userid},#{result.taskid})
+    </foreach>
+  </insert>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select * from multi_objective_recommend_result;
+  </select>
+
+  <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from multi_objective_recommend_result
+    where userid=#{userid}
+  </select>
+</mapper>

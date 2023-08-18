@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.recommend.MultiObjectiveRecommendFactorMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.recommend.MultiObjectiveRecommendFactor">
+    <id column="taskId" jdbcType="INTEGER" property="taskid" />
+    <result column="worker_ability" jdbcType="DOUBLE" property="workerAbility" />
+    <result column="activeness" jdbcType="DOUBLE" property="activeness" />
+    <result column="worker_diversity" jdbcType="DOUBLE" property="workerDiversity" />
+    <result column="task_relevance" jdbcType="DOUBLE" property="taskRelevance" />
+    <result column="worker_cost" jdbcType="DOUBLE" property="workerCost" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from multi_objective_recommend_factor
+    where taskId = #{taskid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.recommend.MultiObjectiveRecommendFactor">
+    insert into multi_objective_recommend_factor (taskId, worker_ability, activeness, 
+      worker_diversity, task_relevance, worker_cost
+      )
+    values (#{taskid,jdbcType=INTEGER}, #{workerAbility,jdbcType=DOUBLE}, #{activeness,jdbcType=DOUBLE}, 
+      #{workerDiversity,jdbcType=DOUBLE}, #{taskRelevance,jdbcType=DOUBLE}, #{workerCost,jdbcType=DOUBLE}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.recommend.MultiObjectiveRecommendFactor">
+    update multi_objective_recommend_factor
+    set worker_ability = #{workerAbility,jdbcType=DOUBLE},
+      activeness = #{activeness,jdbcType=DOUBLE},
+      worker_diversity = #{workerDiversity,jdbcType=DOUBLE},
+      task_relevance = #{taskRelevance,jdbcType=DOUBLE},
+      worker_cost = #{workerCost,jdbcType=DOUBLE}
+    where taskId = #{taskid,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select taskId, worker_ability, activeness, worker_diversity, task_relevance, worker_cost
+    from multi_objective_recommend_factor
+    where taskId = #{taskid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByTaskIds" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select taskId, worker_ability, activeness, worker_diversity, task_relevance, worker_cost
+    from multi_objective_recommend_factor where taskId in
+    <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select taskId, worker_ability, activeness, worker_diversity, task_relevance, worker_cost
+    from multi_objective_recommend_factor
+  </select>
+</mapper>

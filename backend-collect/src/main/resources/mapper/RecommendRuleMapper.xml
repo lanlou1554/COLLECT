@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.recommend.RecommendRuleMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.recommend.RecommendRule">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="isUsing" jdbcType="BIT" property="isusing" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from rule
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.recommend.RecommendRule" useGeneratedKeys="true" keyProperty="id">
+    insert into rule (id, name, isUsing
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{isusing,jdbcType=BIT}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.recommend.RecommendRule">
+    update rule
+    set name = #{name,jdbcType=VARCHAR},
+      isUsing = #{isusing,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, name, isUsing
+    from rule
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, isUsing
+    from rule
+  </select>
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, name, isUsing
+    from rule
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+  <update id="updateAllOff">
+    update rule
+    set isUsing = false
+  </update>
+  <update id="updateOneOn" parameterType="java.lang.Integer">
+    update rule
+    set isUsing = true
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

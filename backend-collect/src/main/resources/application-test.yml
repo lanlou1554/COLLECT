@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://121.41.59.63:3306/collect?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: Yilan53;
+    bySearch:
+      testWhileIdle: true
+      validationQuery: SELECT 1
+      timeBestweenEvictionRunsMillis: 3600000 #????????????
+
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.seiii.collect.data
+
+oss:
+  endpoint: oss-cn-beijing.aliyuncs.com # oss对外服务的访问域名
+  accessKeyId: LTAI5t7vBhohqDiLv2as4fy5 # 访问身份验证中用到用户标识
+  accessKeySecret: 2j4jLWC5VrwwGScriZb2SCjYOrb0jp # 用户用于加密签名字符串和oss用来验证签名字符串的密钥
+  bucketName: seiiicollect # oss的存储空间
+  maxSize: 10 # 上传文件大小(M)
+  dir: test   # 上传文件夹路径
+  callback: http://120.77.16.147:8080/api/file/callback
+
+python:
+  url: http://1.15.174.191:5000/
+
+scheduledTaskTime:
+  refreshRecommendationResult: 0 0 4 * * ? # 凌晨四点执行该任务
+  #refreshRecommendationResult: 0/5 * * * * ?
+  refreshWorkerAbility: 0 0 3 * * ? # 凌晨三点执行

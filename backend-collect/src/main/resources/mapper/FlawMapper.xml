@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.flaw.FlawMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.flaw.Flaw">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="reportId" jdbcType="INTEGER" property="reportid" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="stepDes" jdbcType="VARCHAR" property="stepdes" />
+    <result column="deviceInfo" jdbcType="VARCHAR" property="deviceinfo" />
+    <result column="score" jdbcType="DOUBLE" property="score" />
+    <result column="state" jdbcType="BOOLEAN" property="state" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="scoreNum" jdbcType="INTEGER" property="scorenum" />
+    <result column="taskId" jdbcType="INTEGER" property="taskid" />
+    <result column="appendContent" jdbcType="VARCHAR" property="appendcontent" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from flaw
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.flaw.Flaw" useGeneratedKeys="true" keyProperty="id">
+    insert into flaw (id, reportId, description, 
+      stepDes, deviceInfo, score, state, path, scoreNum, taskId, appendContent)
+    values (#{id,jdbcType=INTEGER}, #{reportid,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, 
+      #{stepdes,jdbcType=VARCHAR}, #{deviceinfo,jdbcType=VARCHAR}, #{score,jdbcType=DOUBLE},
+      #{state,jdbcType=BOOLEAN}, #{path,jdbcType=VARCHAR}, #{scorenum,jdbcType=INTEGER},
+      #{taskid,jdbcType=INTEGER}, #{appendcontent,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.flaw.Flaw">
+    update flaw
+    set reportId = #{reportid,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      stepDes = #{stepdes,jdbcType=VARCHAR},
+      deviceInfo = #{deviceinfo,jdbcType=VARCHAR},
+      score = #{score,jdbcType=DOUBLE},
+      state = #{state,jdbcType=BOOLEAN},
+      path = #{path,jdbcType=VARCHAR},
+      scoreNum = #{scorenum,jdbcType=INTEGER},
+      taskId = #{taskid,jdbcType=INTEGER},
+      appendContent = #{appendcontent,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, reportId, description, stepDes, deviceInfo, score, state, path, scoreNum, taskId, appendContent
+    from flaw
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, reportId, description, stepDes, deviceInfo, score, state, path, scoreNum, taskId, appendContent
+    from flaw
+  </select>
+  <select id="selectByReportId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, reportId, description, stepDes, deviceInfo, score, state, path, scoreNum, taskId, appendContent
+    from flaw
+    where reportId = #{reportid}
+  </select>
+  <select id="selectByTaskId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, reportId, description, stepDes, deviceInfo, score, state, path, scoreNum, taskId, appendContent
+    from flaw
+    where taskId = #{taskid}
+  </select>
+</mapper>

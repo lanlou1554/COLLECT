@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seiii.collect.mapper.flaw.ScoreMapper">
+  <resultMap id="BaseResultMap" type="com.seiii.collect.model.po.flaw.Score">
+    <id column="userId" jdbcType="INTEGER" property="userid" />
+    <id column="flawId" jdbcType="INTEGER" property="flawid" />
+    <result column="socre" jdbcType="INTEGER" property="socre" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from score
+    where userId = #{userid,jdbcType=INTEGER}
+      and flawId = #{flawid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.seiii.collect.model.po.flaw.Score">
+    insert into score (userId, flawId, socre
+      )
+    values (#{userid,jdbcType=INTEGER}, #{flawid,jdbcType=INTEGER}, #{socre,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.seiii.collect.model.po.flaw.Score">
+    update score
+    set socre = #{socre,jdbcType=INTEGER}
+    where userId = #{userid,jdbcType=INTEGER}
+      and flawId = #{flawid,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select userId, flawId, socre
+    from score
+    where userId = #{userid,jdbcType=INTEGER}
+      and flawId = #{flawid,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select userId, flawId, socre
+    from score
+  </select>
+  <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select userId, flawId, socre
+    from score
+    where userId = #{userid}
+  </select>
+</mapper>
